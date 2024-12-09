@@ -1,17 +1,17 @@
 import { AiOutlineHome } from "react-icons/ai";
 import { FaRegHeart } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { Dispatch } from "react";
+import { Dispatch, SetStateAction } from "react";
 interface DisplayPlaylistProps{
-  setUpdateDisplayInfo:Dispatch<React.SetStateAction<boolean>>
+  setUpdateDisplayInfo:Dispatch<SetStateAction<boolean>>
+  setSearchText:Dispatch<SetStateAction<string>>
 }
 
-export default function DisplayPlaylist({setUpdateDisplayInfo}: DisplayPlaylistProps) {
-  const router =useRouter();
+export default function DisplayPlaylist({setUpdateDisplayInfo,setSearchText}: DisplayPlaylistProps) {
 
   const returnMainPage=()=>{
-    router.push('/')
-    setUpdateDisplayInfo(prev=> !prev)
+    setSearchText("");
+    setUpdateDisplayInfo(prev=> !prev);
   }
 
   return(

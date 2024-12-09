@@ -1,5 +1,8 @@
 import { DisplayInfoTypes } from "@/types/display-info-types"
 import login from '../assets/login.png'
+import { useInfoDisplay } from "@/hooks/useInfoDisplay"
+import { ActionModalTypes } from "@/types/action-modal-types"
+import { useOpenModal } from "@/hooks/useOpenModal"
 
 
 interface ListProps{
@@ -10,6 +13,7 @@ interface ListProps{
 }
 
 export default function List({index, inf, handleClick, type}: ListProps){
+
   return(
     <li
       key={index}

@@ -13,7 +13,6 @@ interface PlaylistInfoProps{
 }
 
 export default function PlaylistInfo ({choisedArtist } :PlaylistInfoProps){
-  console.log(choisedArtist)
   return(
     <section 
       className='relative z-10'>

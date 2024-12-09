@@ -1,3 +1,7 @@
+import { useInfoDisplay } from "@/hooks/useInfoDisplay";
+import { useOpenModal } from "@/hooks/useOpenModal";
+import { ActionModalTypes } from "@/types/action-modal-types";
+import { DisplayInfoTypes } from "@/types/display-info-types";
 import { FaRegHeart, FaTrash } from "react-icons/fa"
 
 
@@ -7,7 +11,17 @@ interface ListMusic{
 }
 
 export default function ListMusic ({index, song }:ListMusic){
-  console.log(song)
+  console.log()
+  const {showOrNotModal} = useOpenModal();
+  const {setInputValue1} = useInfoDisplay();
+  
+  const handleOpenModalUpdateMusic =(name:string, key:string)=>{
+    showOrNotModal(true,DisplayInfoTypes.SONG, ActionModalTypes.UPDATE);
+    setInputValue1(name)
+  }
+
+
+
   return(
     <li
       key={index}
@@ -19,7 +33,9 @@ export default function ListMusic ({index, song }:ListMusic){
       <span className='flex w-2/6 justify-center'>{song.album.name}</span>
       <span className='flex w-2/6 justify-center'>{song.artist.name}</span>
       <div className='flex  gap-4  text-white'>
-        <span className='hover:scale-110 transition-all ease-in-out duration-300'><FaRegHeart/></span>
+        <span
+          onClick={()=>handleOpenModalUpdateMusic(song.name, song['@key'] )}
+          className='hover:scale-110 transition-all ease-in-out duration-300'><FaRegHeart/></span>
         <span className='hover:scale-110 transition-all ease-in-out duration-300'><FaTrash/></span>
       </div>
     </li>

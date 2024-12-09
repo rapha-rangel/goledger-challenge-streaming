@@ -3,12 +3,13 @@ import { useEffect, useState } from "react"
 import LoadingDisplay from "./loading-display"
 import ArtistInfo from "./artist-info"
 import { DisplayInfoTypes } from "@/types/display-info-types";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import PlaylistInfo from "./playlist-info"
 import AlbumInfo from "./album-info"
 import List from "./list"
 import { FiPlusCircle } from "react-icons/fi";
 import { useOpenModal } from "@/hooks/useOpenModal";
+import { ActionModalTypes } from "@/types/action-modal-types";
 
 
 interface DisplayInfoProps {
@@ -22,10 +23,11 @@ export default function DisplayInfo ({updateDisplayInfo, searchText, loadingDisp
   const [infoApi, setInfoApis] = useState<any>([]);
   const [displayInfoTypes, setDisplayInfoTypes] =  useState(DisplayInfoTypes.ALL);
   const [choisedArtist, setChoisedArtist] = useState<any>();
-  const searchParams  = useSearchParams();
+  // const searchParams  = useSearchParams();
   const router = useRouter();
-  const formatParams=searchParams.get('key');
-  const {showOrNotModal} = useOpenModal()
+  // const formatParams=searchParams.get('key');
+  const {showOrNotModal} = useOpenModal();
+
 
   const fetchAllInfos =async ()=>{
     setDisplayInfoTypes(DisplayInfoTypes.ALL);
@@ -38,32 +40,19 @@ export default function DisplayInfo ({updateDisplayInfo, searchText, loadingDisp
   }
 
   useEffect(()=>{
-    fetchAllInfos();
-  }, [])
-
-  useEffect(()=>{
-    console.log(searchText)
     setLoadingDisplayIsTrue(true);
-    if(searchText){
-      router.push(`/?query=${searchText}`);
-      fetchAllInfos();
-    } else{
-      router.push(`/`)
-      fetchAllInfos();
-    }
-  },[updateDisplayInfo]);
+    fetchAllInfos();
+  }, [updateDisplayInfo])
 
   const choiseArtist =async (key: string)=>{
-    router.push(`/?key=${key}`);
     setLoadingDisplayIsTrue(true);
     const res = await getChoisedArtist(key);
-    setChoisedArtist(res)
+    setChoisedArtist(res);
     setDisplayInfoTypes(DisplayInfoTypes.ARTIST)
     setLoadingDisplayIsTrue(false);
   }
 
   const choisePlaylist =async (key: string)=>{
-    router.push(`/?key=${key}`);
     setLoadingDisplayIsTrue(true);
     const res = await getChoisedPlaylist(key);
     setChoisedArtist(res)
@@ -72,7 +61,6 @@ export default function DisplayInfo ({updateDisplayInfo, searchText, loadingDisp
   }
 
   const choiseAlbum= async (key: string)=>{
-    router.push(`/?key=${key}`);
     setLoadingDisplayIsTrue(true);
     const res = await getChoisedAlbum(key);
     setChoisedArtist(res);
@@ -81,16 +69,24 @@ export default function DisplayInfo ({updateDisplayInfo, searchText, loadingDisp
   }
 
   const handleOpenModal=(name:string)=>{
-    if(name ==="playlists") showOrNotModal(true, DisplayInfoTypes.PLAYLIST)
-    if(name ==="albums") showOrNotModal(true, DisplayInfoTypes.ALBUM)
-    if(name ==="artists") showOrNotModal(true, DisplayInfoTypes.ARTIST)
+    if(name ==="playlists") {
+      showOrNotModal(true, DisplayInfoTypes.PLAYLIST, ActionModalTypes.CREATE)
+    }else
+    if(name ==="albums") {
+      showOrNotModal(true,DisplayInfoTypes.ALBUM, ActionModalTypes.CREATE)
+    }else
+    if(name ==="artists") {
+      showOrNotModal(true,DisplayInfoTypes.ARTIST,  ActionModalTypes.CREATE)
+    }
   }
 
   return(
     <section className="relative mt-[5.7rem] w-full">
-      <LoadingDisplay loadingDisplayIsTrue={loadingDisplayIsTrue}/>
-      {displayInfoTypes === DisplayInfoTypes.ALL &&
-      <div id="/" 
+      {loadingDisplayIsTrue?
+        <LoadingDisplay loadingDisplayIsTrue={loadingDisplayIsTrue}/>
+      :
+      displayInfoTypes === DisplayInfoTypes.ALL ?
+      <div 
         className="relative bg-[#0F0D13] z-10">
           {infoApi && infoApi.map((item:any, index:number)=>(
           <div key={index} className="p-10">
@@ -135,24 +131,24 @@ export default function DisplayInfo ({updateDisplayInfo, searchText, loadingDisp
             </ul>
           </div>
         ))}
-      </div>}
-      {displayInfoTypes === DisplayInfoTypes.ARTIST && 
+      </div>
+      :displayInfoTypes === DisplayInfoTypes.ARTIST? 
         <ArtistInfo
           choisedArtist={choisedArtist}
           setLoadingDisplayIsTrue={setLoadingDisplayIsTrue}
           setDisplayInfoTypes={setDisplayInfoTypes} />
-      }
-      {displayInfoTypes === DisplayInfoTypes.PLAYLIST && 
+      :
+      displayInfoTypes === DisplayInfoTypes.PLAYLIST ? 
         <PlaylistInfo
           choisedArtist={choisedArtist}
           setLoadingDisplayIsTrue={setLoadingDisplayIsTrue}
           setDisplayInfoTypes={setDisplayInfoTypes} />
-      }
-      {displayInfoTypes === DisplayInfoTypes.ALBUM && 
+      :displayInfoTypes === DisplayInfoTypes.ALBUM ?
         <AlbumInfo
           choisedArtist={choisedArtist}
           setLoadingDisplayIsTrue={setLoadingDisplayIsTrue}
           setDisplayInfoTypes={setDisplayInfoTypes} />
+      :null
       }
     </section>
   )

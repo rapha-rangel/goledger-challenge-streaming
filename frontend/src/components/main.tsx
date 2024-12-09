@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DisplayInfo from "./display-info";
 import DisplayPlaylist from "./display-playlist";
 import Header from "./header";
-import ModalCreateArtist from "./modal-create-artist";
+import Snackbar from "./snackbar";
+import ModalAction from "./modal-action";
 
 
 export default function Main(){
@@ -14,10 +15,12 @@ export default function Main(){
   const [loadingDisplayIsTrue, setLoadingDisplayIsTrue] = useState(false);
   return(
     <>
-      <ModalCreateArtist/>
+      <ModalAction setUpdateDisplayInfo={setUpdateDisplayInfo}/>
+      <Snackbar />
       <section className="relative flex min-h-[100vh] w-full bg-[#0F0D13] ">
-      <DisplayPlaylist
-        setUpdateDisplayInfo={setUpdateDisplayInfo}/>
+        <DisplayPlaylist
+          setSearchText={setSearchText}
+          setUpdateDisplayInfo={setUpdateDisplayInfo}/>
         <div className="ml-[17.8rem] w-[85%]">
           <Header
             searchText={searchText} 
